@@ -1,0 +1,37 @@
+name: Edit badges
+
+on:
+  workflow_call:
+    inputs:
+      repo_name:
+        type: string
+        required: true
+      repo_branch:
+        type: string
+        required: true
+      env_name:
+        type: string
+        required: true
+      vers:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  Edit_Badges:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: debug inputs
+        run: |
+          echo "The repo ${{ inputs.repo_name }}"
+          echo "The branch ${{ inputs.repo_branch }}"
+          echo "The vers ${{ inputs.vers }}"
+          echo "The env_name ${{ inputs.env_name }}"
+
+      # - name: edit vers svg
+        
