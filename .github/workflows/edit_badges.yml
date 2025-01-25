@@ -17,7 +17,7 @@ on:
         required: true
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   Edit_Badges:
@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
+        env:
+          ${{secrets.GITHUB_TOKEN}}
 
       - name: debug inputs
         run: |
@@ -34,4 +36,3 @@ jobs:
           echo "The env_name ${{ inputs.env_name }}"
 
       # - name: edit vers svg
-        
