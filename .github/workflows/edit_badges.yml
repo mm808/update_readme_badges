@@ -15,6 +15,9 @@ on:
       vers:
         type: string
         required: true
+    secrets:
+      PERSONAL_ACCESS_TOKEN:
+        required: true
 
 permissions:
   contents: write
