@@ -15,9 +15,6 @@ on:
       vers:
         type: string
         required: true
-    # secrets:
-    #   PERSONAL_ACCESS_TOKEN:
-    #     required: true
 
 permissions:
   contents: read
@@ -36,4 +33,10 @@ jobs:
           echo "The vers ${{ inputs.vers }}"
           echo "The env_name ${{ inputs.env_name }}"
 
-      # - name: edit vers svg
+      - name: edit vers svg
+        shell: bash
+        run: |
+          # Replace the {{VERSION}} placeholder in template.svg with the input version
+          sed "s/{{VERSION}}/${{ github.event.inputs.vers }}/g" ${{ inputs.env_name }}_vers.svg > updated.svg
+          mv updated.svg ${{ inputs.env_name }}_vers.svg
+          cat ${{ inputs.env_name}}_vers.svg
