@@ -37,6 +37,6 @@ jobs:
         shell: bash
         run: |
           # Replace the {{VERSION}} placeholder in template.svg with the input version
-          sed "s/{{VERSION}}/${{ github.event.inputs.vers }}/g" ${{ inputs.env_name }}_vers.svg > updated.svg
-          mv updated.svg ${{ inputs.env_name }}_vers.svg
-          cat ${{ inputs.env_name}}_vers.svg
+          sed "s/{{VERSION}}/${{ github.event.inputs.vers }}/g" assets/${{ inputs.env_name }}_vers.svg > updated.svg
+          mv updated.svg assets/${{ inputs.env_name }}_vers.svg
+          cat assets/${{ inputs.env_name}}_vers.svg
