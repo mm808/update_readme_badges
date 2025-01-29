@@ -25,6 +25,9 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
+        with:
+          ref: main
+          path: ${{ inputs.repo_name }}
 
       - name: debug inputs
         run: |
@@ -36,6 +39,8 @@ jobs:
       - name: edit vers svg
         shell: bash
         run: |
+          set -eu
+          cd ${{ inputs.repo_name }}
           # Replace the {{VERSION}} placeholder in template.svg with the input version
           sed "s/{{VERSION}}/${{ inputs.vers }}/g" assets/${{ inputs.env_name }}_vers.svg > updated.svg
           mv updated.svg assets/${{ inputs.env_name }}_vers.svg
