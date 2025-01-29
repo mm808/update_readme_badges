@@ -41,8 +41,8 @@ jobs:
         run: |
           set -eu
           cd ${{ inputs.repo_name }}
-          # Replace the {{VERSION}} placeholder in template.svg with the input version
-          sed "s/{{VERSION}}/${{ inputs.vers }}/g" assets/${{ inputs.env_name }}_vers.svg > updated.svg
+          # Replace the {{VERSION}} placeholder in blank_vers.svg with the input version
+          sed "s/{{VERSION}}/${{ inputs.vers }}/g" assets/blank_vers.svg > updated.svg
           mv updated.svg assets/${{ inputs.env_name }}_vers.svg
           
           cat assets/${{ inputs.env_name}}_vers.svg
