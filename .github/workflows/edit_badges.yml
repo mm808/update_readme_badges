@@ -1,19 +1,27 @@
 name: Edit badges
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       repo_name:
         type: string
+        description: the repo to edit badges in
         required: true
       repo_branch:
         type: string
+        description: the branch to edit badges for
         required: true
       env_name:
         type: string
+        description: env to edit badges for
         required: true
       vers:
         type: string
+        description: the version value to edit badges with
+        required: true
+      job_status:
+        type: string
+        description: status of calling job
         required: true
 
 permissions:
@@ -35,24 +43,25 @@ jobs:
           echo "The branch ${{ inputs.repo_branch }}"
           echo "The vers ${{ inputs.vers }}"
           echo "The env_name ${{ inputs.env_name }}"
+          echo "The job_status ${{ inputs.job_status}}"
 
-      - name: edit vers svg
-        shell: bash
-        run: |
-          set -eu
-          cd ${{ inputs.repo_name }}
-          # Replace the {{VERSION}} placeholder in blank_vers.svg with the input version
-          sed "s/{{VERSION}}/${{ inputs.vers }}/g" assets/blank_vers.svg > updated.svg
-          mv updated.svg assets/${{ inputs.env_name }}_vers.svg
-          
-          cat assets/${{ inputs.env_name}}_vers.svg
+      # - name: edit vers svg
+      #   shell: bash
+      #   run: |
+      #     set -eu
+      #     cd ${{ inputs.repo_name }}
+      #     # Replace the {{VERSION}} placeholder in blank_vers.svg with the input version
+      #     sed "s/{{VERSION}}/${{ inputs.vers }}/g" assets/blank_vers.svg > updated.svg
+      #     mv updated.svg assets/${{ inputs.env_name }}_vers.svg
 
-      - name: Configure git and push commit
-        run: |
-          set -eu
-          cd ${{ inputs.repo_name }}
-          git config user.name "mm808"
-          git config user.email "mm808@users.noreply.github.com"
-          git add .
-          git commit -m "Automated badge update by update_readme_badges GitHub workflow"
-          git push
+      #     cat assets/${{ inputs.env_name}}_vers.svg
+
+      # - name: Configure git and push commit
+      #   run: |
+      #     set -eu
+      #     cd ${{ inputs.repo_name }}
+      #     git config user.name "mm808"
+      #     git config user.email "mm808@users.noreply.github.com"
+      #     git add .
+      #     git commit -m "Automated badge update by update_readme_badges GitHub workflow"
+      #     git push
