@@ -1,7 +1,7 @@
 name: Edit badges
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       repo_name:
         type: string
