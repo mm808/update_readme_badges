@@ -31,12 +31,6 @@ jobs:
   Edit_Badges:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          path: ${{ inputs.repo_name }}
-
       - name: debug inputs
         run: |
           echo "The repo ${{ inputs.repo_name }}"
@@ -44,6 +38,12 @@ jobs:
           echo "The vers ${{ inputs.vers }}"
           echo "The env_name ${{ inputs.env_name }}"
           echo "The job_status ${{ inputs.job_status}}"
+
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: ${{ inputs.repo_name }}
 
       # - name: edit vers svg
       #   shell: bash
