@@ -61,10 +61,10 @@ jobs:
           cd ${{ inputs.repo_name }}
           if [ "${{ inputs.job_status }}" = "success" ]; then
             sed "s/{{COLOR}}/green/g" assets/blank_status.svg > updated_status.svg
-            sed "s/{{STATUS}}/passing/g" assets/blank_status.svg > updated_status.svg
+            sed "s/{{STATUS}}/pass/g" assets/blank_status.svg > updated_status.svg
           elif [ "${{ inputs.job_status }}" = "failure" ]; then
             sed "s/{{COLOR}}/red/g" assets/blank_status.svg > updated_status.svg
-            sed "s/{{STATUS}}/failing/g" assets/blank_status.svg > updated_status.svg
+            sed "s/{{STATUS}}/fail/g" assets/blank_status.svg > updated_status.svg
           else
             echo "Invalid job status. Cannot update status badge."
             exit 1
