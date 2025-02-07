@@ -45,23 +45,39 @@ jobs:
           ref: main
           path: ${{ inputs.repo_name }}
 
-      # - name: edit vers svg
-      #   shell: bash
-      #   run: |
-      #     set -eu
-      #     cd ${{ inputs.repo_name }}
-      #     # Replace the {{VERSION}} placeholder in blank_vers.svg with the input version
-      #     sed "s/{{VERSION}}/${{ inputs.vers }}/g" assets/blank_vers.svg > updated.svg
-      #     mv updated.svg assets/${{ inputs.env_name }}_vers.svg
+      - name: edit vers svg
+        shell: bash
+        run: |
+          set -eu
+          cd ${{ inputs.repo_name }}
+          # Replace the {{VERSION}} placeholder in blank_vers.svg with the input version
+          sed "s/{{VERSION}}/${{ inputs.vers }}/g" assets/blank_vers.svg > updated_vers.svg
+          mv updated_vers.svg assets/${{ inputs.env_name }}_vers.svg
 
-      #     cat assets/${{ inputs.env_name}}_vers.svg
+      - name: edit status svg
+        shell: bash
+        run: |
+          set -eu
+          cd ${{ inputs.repo_name }}
+          if [ "${{ inputs.job_status }}" = "success" ]; then
+            sed "s/{{COLOR}}/green/g" assets/blank_status.svg > updated_status.svg
+            sed "s/{{STATUS}}/passing/g" assets/blank_status.svg > updated_status.svg
+          elif [ "${{ inputs.job_status }}" = "failure" ]; then
+            sed "s/{{COLOR}}/red/g" assets/blank_status.svg > updated_status.svg
+            sed "s/{{STATUS}}/failing/g" assets/blank_status.svg > updated_status.svg
+          else
+            echo "Invalid job status. Cannot update status badge."
+            exit 1
+          fi
 
-      # - name: Configure git and push commit
-      #   run: |
-      #     set -eu
-      #     cd ${{ inputs.repo_name }}
-      #     git config user.name "mm808"
-      #     git config user.email "mm808@users.noreply.github.com"
-      #     git add .
-      #     git commit -m "Automated badge update by update_readme_badges GitHub workflow"
-      #     git push
+          mv updated_status.svg assets/${{ inputs.env_name }}_build_status.svg
+
+      - name: Configure git and push commit
+        run: |
+          set -eu
+          cd ${{ inputs.repo_name }}
+          git config user.name "mm808"
+          git config user.email "mm808@users.noreply.github.com"
+          git add .
+          git commit -m "Automated badge update by update_readme_badges GitHub workflow"
+          git push
