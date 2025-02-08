@@ -5,33 +5,78 @@ on:
     inputs:
       repo_name:
         type: string
+        description: the repo to edit badges in
         required: true
       repo_branch:
         type: string
+        description: the branch to edit badges for
         required: true
       env_name:
         type: string
+        description: env to edit badges for
         required: true
       vers:
         type: string
+        description: the version value to edit badges with
+        required: true
+      job_status:
+        type: string
+        description: status of calling job
         required: true
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   Edit_Badges:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v4
-
       - name: debug inputs
         run: |
           echo "The repo ${{ inputs.repo_name }}"
           echo "The branch ${{ inputs.repo_branch }}"
           echo "The vers ${{ inputs.vers }}"
           echo "The env_name ${{ inputs.env_name }}"
+          echo "The job_status ${{ inputs.job_status}}"
 
-      # - name: edit vers svg
-        
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: ${{ inputs.repo_name }}
+
+      - name: edit vers svg
+        shell: bash
+        run: |
+          set -eu
+          cd ${{ inputs.repo_name }}
+          # Replace the {{VERSION}} placeholder in blank_vers.svg with the input version
+          sed "s/{{VERSION}}/${{ inputs.vers }}/g" assets/blank_vers.svg > updated_vers.svg
+          mv updated_vers.svg assets/${{ inputs.env_name }}_vers.svg
+
+      - name: edit status svg
+        shell: bash
+        run: |
+          set -eu
+          cd "${{ inputs.repo_name }}"
+
+          if [ "${{ inputs.job_status }}" = "success" ]; then
+              sed 's/"#c7b7b7"/"green"/g; s/{{STATUS}}/pass/g' assets/blank_status.svg > updated_status.svg
+          elif [ "${{ inputs.job_status }}" = "failure" ]; then
+              sed 's/"#c7b7b7"/"red"/g; s/{{STATUS}}/fail/g' assets/blank_status.svg > updated_status.svg
+          else
+              echo "Invalid job status. Cannot update status badge."
+              exit 1
+          fi
+
+          mv updated_status.svg assets/"${{ inputs.env_name }}"_build_status.svg
+
+      - name: Configure git and push commit
+        run: |
+          set -eu
+          cd ${{ inputs.repo_name }}
+          git config user.name "mm808"
+          git config user.email "mm808@users.noreply.github.com"
+          git add .
+          git commit -m "Automated badge update by update_readme_badges GitHub workflow"
+          git push
