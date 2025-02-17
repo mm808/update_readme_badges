@@ -30,8 +30,6 @@ jobs:
           echo "The repo ${{ inputs.repo_name }}"
           echo "The branch ${{ inputs.repo_branch }}"
           echo "The vers ${{ inputs.vers }}"
-          echo "The env_name ${{ inputs.env_name }}"
-          echo "The job_status ${{ inputs.job_status}}"
 
       # always checkout main because we want that branch's README.md updated for all runs
       - name: Checkout the repository
@@ -45,11 +43,11 @@ jobs:
         run: |
           set -eu
           cd ${{ inputs.repo_name }}
-          if [[ ${repo_branch} == dev ]]; then
+          if [[ ${inputs.repo_branch} == dev ]]; then
             sed -i '/### DEV/,/### QA/ s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*\.[0-9]*/\1'"${inputs.vers}"'/' README.md
-          elif [[ ${repo_branch} == qa ]]; then
+          elif [[ ${inputs.repo_branch} == qa ]]; then
             sed -i '/### QA/,/### MAIN/ s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*\.[0-9]*/\1'"${inputs.vers}"'/' README.md
-          elif [[ ${repo_branch} == main ]]; then
+          elif [[ ${inputs.repo_branch} == main ]]; then
             sed -i '/### MAIN/ s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*\.[0-9]*/\1'"${inputs.vers}"'/' README.md
           else
             echo "ERR: Branch not found. Cannot update Vers badge."
