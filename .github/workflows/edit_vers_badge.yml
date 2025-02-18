@@ -1,0 +1,65 @@
+name: Edit version badge
+
+on:
+  workflow_call:
+    inputs:
+      repo_name:
+        type: string
+        description: the repo to edit badges in
+        required: true
+      repo_branch:
+        type: string
+        description: the branch to edit badges for
+        required: true
+      vers:
+        type: string
+        description: the version value to edit badges with
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  Edit_Vers_Badge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: debug inputs
+        shell: bash
+        run: |
+          set -eu
+          echo "The repo ${{ inputs.repo_name }}"
+          echo "The branch ${{ inputs.repo_branch }}"
+          echo "The vers ${{ inputs.vers }}"
+
+      # always checkout main because we want that branch's README.md updated for all runs
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: ${{ inputs.repo_name }}
+
+      - name: Update Vers badge
+        shell: bash
+        run: |
+          set -eu
+          cd ${{ inputs.repo_name }}
+          if [[ ${{ inputs.repo_branch }} == dev ]]; then
+            sed -i '/### DEV/,/### QA/ s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*/\1'"${{ inputs.vers }}"'/' README.md
+          elif [[ ${{ inputs.repo_branch }} == qa ]]; then
+            sed -i '/### QA/,/### MAIN/ s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*/\1'"${{ inputs.vers }}"'/' README.md
+          elif [[ ${{ inputs.repo_branch }} == main ]]; then
+            sed -i '/### MAIN/{n; n; n; s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*/\1'"${{ inputs.vers }}"'/}' README.md
+          else
+            echo "ERR: Branch not found. Cannot update Vers badge."
+            exit 1
+          fi
+
+      - name: Configure git and push commit
+        run: |
+          set -eu
+          cd ${{ inputs.repo_name }}
+          git config user.name "mm808"
+          git config user.email "mm808@users.noreply.github.com"
+          git add .
+          git commit -m "Automated vers badge update by edit_vers_badge workflow"
+          git push
