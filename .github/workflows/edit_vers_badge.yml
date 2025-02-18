@@ -52,10 +52,10 @@ jobs:
             sed -i '/### QA/,/### MAIN/ s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*\.[0-9]*/\1'"${{ inputs.vers }}"'/' README.md
           elif [[ ${{ inputs.repo_branch }} == main ]]; then
             # sed -i '/### MAIN:/,/###/ s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*\.[0-9]*/\1'"${{ inputs.vers }}"'/' README.md - no update
-            # sed -i '/### MAIN/{n; n; s/VER-[0-9]*\.[0-9]*\.[0-9]*/VER-"${{ inputs.vers }}"/}' README.md - no update
+            sed -i '/### MAIN/{n; n; n; s/VER-[0-9]*\.[0-9]*\.[0-9]*/VER-"${{ inputs.vers }}"/}' README.md
             # sed -i '/### MAIN/ s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*\.[0-9]*/\1'"${{ inputs.vers }}"'/' README.md - no update
             # sed -i '/### MAIN/{:a; n; /VER-[0-9]\+\.[0-9]\+\.[0-9]\+/ s/VER-[0-9]\+\.[0-9]\+\.[0-9]\+/VER-${{ inputs.vers }}/;}' README.md - no update
-            sed -i '/### MAIN/ {n; n; n; s/\(VER-\)[0-9]\+\.[0-9]\+\.[0-9]\+/\1'"${{ inputs.version }}"'/}' README.md
+            # sed -i '/### MAIN/ {n; n; n; s/\(VER-\)[0-9]\+\.[0-9]\+\.[0-9]\+/\1'"${{ inputs.version }}"'/}' README.md
 
 
           else
