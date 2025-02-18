@@ -53,8 +53,8 @@ jobs:
           elif [[ ${{ inputs.repo_branch }} == main ]]; then
             # sed -i '/### MAIN:/,/###/ s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*\.[0-9]*/\1'"${{ inputs.vers }}"'/' README.md - no update
             # sed -i '/### MAIN/{n; n; s/VER-[0-9]*\.[0-9]*\.[0-9]*/VER-"${{ inputs.vers }}"/}' README.md - no update
-            sed -i '/### MAIN/ s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*\.[0-9]*/\1'"${{ inputs.vers }}"'/' README.md
-
+            # sed -i '/### MAIN/ s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*\.[0-9]*/\1'"${{ inputs.vers }}"'/' README.md - no update
+            sed -i '/### MAIN/{:a; n; /VER-[0-9]\+\.[0-9]\+\.[0-9]\+/ s/VER-[0-9]\+\.[0-9]\+\.[0-9]\+/VER-NEW.VERSION/;}' README.md
           else
             echo "ERR: Branch not found. Cannot update Vers badge."
             exit 1
