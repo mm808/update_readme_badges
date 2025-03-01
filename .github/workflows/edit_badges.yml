@@ -31,45 +31,51 @@ jobs:
   Edit_Badges:
     runs-on: ubuntu-latest
     steps:
-      - name: debug inputs
+      - name: setup env inputs
+        shell: bash
         run: |
           echo "The repo ${{ inputs.repo_name }}"
           echo "The branch ${{ inputs.repo_branch }}"
           echo "The vers ${{ inputs.vers }}"
           echo "The env_name ${{ inputs.env_name }}"
           echo "The job_status ${{ inputs.job_status}}"
+          if [[ "${{ inputs.env_name }}" == "main" ]]; then
+            env="PROD"
+          else
+            env=$(echo "${{ inputs.env_name }}" | tr '[:lower:]' '[:upper:]')
+          fi
+          echo "The env ${env}"
 
       - name: Checkout the repository
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: docs
           path: ${{ inputs.repo_name }}
 
       - name: edit vers svg
         shell: bash
         run: |
           set -eu
-          cd ${{ inputs.repo_name }}
-          # Replace the {{VERSION}} placeholder in blank_vers.svg with the input version
-          sed "s/{{VERSION}}/${{ inputs.vers }}/g" assets/blank_vers.svg > updated_vers.svg
-          mv updated_vers.svg assets/${{ inputs.env_name }}_vers.svg
+          cd ${{ inputs.repo_name }}/docs
+          # Replace the VER-xxx.xxx with the input version
+          sed -i '' "s/\(<h3>"${env}"<\/h3>.*VER-\)[0-9]\+\.[0-9]\+\(-blue?style=for-the-badge<\/img>\)/\1${{ inputs.vers }}\2/" index.html
 
-      - name: edit status svg
-        shell: bash
-        run: |
-          set -eu
-          cd "${{ inputs.repo_name }}"
+      # - name: edit status svg
+      #   shell: bash
+      #   run: |
+      #     set -eu
+      #     cd "${{ inputs.repo_name }}"
 
-          if [ "${{ inputs.job_status }}" = "success" ]; then
-              sed 's/"#c7b7b7"/"green"/g; s/{{STATUS}}/pass/g' assets/blank_status.svg > updated_status.svg
-          elif [ "${{ inputs.job_status }}" = "failure" ]; then
-              sed 's/"#c7b7b7"/"red"/g; s/{{STATUS}}/fail/g' assets/blank_status.svg > updated_status.svg
-          else
-              echo "Invalid job status. Cannot update status badge."
-              exit 1
-          fi
+      #     if [ "${{ inputs.job_status }}" = "success" ]; then
+      #         sed 's/"#c7b7b7"/"green"/g; s/{{STATUS}}/pass/g' assets/blank_status.svg > updated_status.svg
+      #     elif [ "${{ inputs.job_status }}" = "failure" ]; then
+      #         sed 's/"#c7b7b7"/"red"/g; s/{{STATUS}}/fail/g' assets/blank_status.svg > updated_status.svg
+      #     else
+      #         echo "Invalid job status. Cannot update status badge."
+      #         exit 1
+      #     fi
 
-          mv updated_status.svg assets/"${{ inputs.env_name }}"_build_status.svg
+      #     mv updated_status.svg assets/"${{ inputs.env_name }}"_build_status.svg
 
       - name: Configure git and push commit
         run: |
