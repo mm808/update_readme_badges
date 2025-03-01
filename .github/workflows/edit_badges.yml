@@ -11,17 +11,9 @@ on:
         type: string
         description: the branch to edit badges for
         required: true
-      env_name:
-        type: string
-        description: env to edit badges for
-        required: true
       vers:
         type: string
         description: the version value to edit badges with
-        required: true
-      job_status:
-        type: string
-        description: status of calling job
         required: true
 
 permissions:
@@ -37,12 +29,10 @@ jobs:
           echo "The repo ${{ inputs.repo_name }}"
           echo "The branch ${{ inputs.repo_branch }}"
           echo "The vers ${{ inputs.vers }}"
-          echo "The env_name ${{ inputs.env_name }}"
-          echo "The job_status ${{ inputs.job_status}}"
-          if [[ "${{ inputs.env_name }}" == "main" ]]; then
+          if [[ "${{ inputs.repo_branch }}" == "main" ]]; then
             env="PROD"
           else
-            env=$(echo "${{ inputs.env_name }}" | tr '[:lower:]' '[:upper:]')
+            env=$(echo "${{ inputs.repo_branch }}" | tr '[:lower:]' '[:upper:]')
           fi
           echo "The env ${env}"
 
