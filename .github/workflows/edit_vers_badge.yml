@@ -16,7 +16,7 @@ on:
         description: the version value to edit badges with
         required: true
 env:
-  repo_owner: mm808
+  repo_owner: "mm808"
 
 permissions:
   contents: write
@@ -25,10 +25,13 @@ jobs:
   Edit_Vers_Badge:
     runs-on: ubuntu-latest
     steps:
+      - name: test
+        run: echo ${{ env.repo_owner }}
+
       - name: Checkout the updater repository
         uses: actions/checkout@v4
         with:
-          repository: $repo_owner/update_readme_badges
+          repository: ${{ env.repo_owner }}/update_readme_badges
           ref: main
           path: update_readme_badges
 
@@ -54,7 +57,7 @@ jobs:
       - name: Checkout the calling repository
         uses: actions/checkout@v4
         with:
-          repository: $repo_owner/${{ inputs.repo_name }}
+          repository: ${{ env.repo_owner }}/${{ inputs.repo_name }}
           ref: docs
           path: ${{ inputs.repo_name }}
 
