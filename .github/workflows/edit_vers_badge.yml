@@ -57,7 +57,7 @@ jobs:
       - name: Checkout the calling repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.repo_owner }}/${{ inputs.repo_name }}
+          repository: ${{ inputs.repo_name }}
           ref: docs
           path: ${{ inputs.repo_name }}
 
