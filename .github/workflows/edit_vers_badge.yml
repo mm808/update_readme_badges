@@ -11,6 +11,11 @@ on:
         type: string
         description: the branch to edit badges for
         required: true
+      repo_owner:
+        type: string
+        description: the owner of the repo to edit badges in
+        required: true
+        default: mm808
       vers:
         type: string
         description: the version value to edit badges with
@@ -26,7 +31,7 @@ jobs:
       - name: Checkout the updater repository
         uses: actions/checkout@v4
         with:
-          repository: mm808/update_readme_badges
+          repository: ${{ inputs.repo_owner }}/update_readme_badges
           ref: main
           path: update_readme_badges
 
@@ -36,8 +41,8 @@ jobs:
           # cd update_readme_badges
           set -eu
 
-          echo pwd
-          echo ls -al
+          pwd
+          ls -al
 
           echo "The repo ${{ inputs.repo_name }}"
           echo "The branch ${{ inputs.repo_branch }}"
@@ -49,20 +54,27 @@ jobs:
           fi
           echo "The env ${env}"
 
-      # - name: edit vers svg
-      #   shell: bash
-      #   run: |
-      #     set -eu
-      #     cd ${{ inputs.repo_name }}/docs
-      #     # Replace the VER-xxx.xxx with the input version
-      #     sed -i '' "s/\(<h3>"${env}"<\/h3>.*VER-\)[0-9]\+\.[0-9]\+\(-blue?style=for-the-badge<\/img>\)/\1${{ inputs.vers }}\2/" index.html
+      - name: Checkout the calling repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.repo_owner }}/${{ inputs.repo_name }}
+          ref: docs
+          path: ${{ inputs.repo_name }}
 
-      # - name: Configure git and push commit
-      #   run: |
-      #     set -eu
-      #     cd ${{ inputs.repo_name }}
-      #     git config user.name "mm808"
-      #     git config user.email "mm808@users.noreply.github.com"
-      #     git add .
-      #     git commit -m "Automated badge update by update_readme_badges GitHub workflow"
-      #     git push
+      - name: edit vers svg
+        shell: bash
+        run: |
+          set -eu
+          cd ${{ inputs.repo_name }}/docs
+          # Replace the VER-xxx.xxx with the input version
+          sed -i '' "s/\(<h3>"${env}"<\/h3>.*VER-\)[0-9]\+\.[0-9]\+\(-blue?style=for-the-badge<\/img>\)/\1${{ inputs.vers }}\2/" index.html
+
+      - name: Configure git and push commit
+        run: |
+          set -eu
+          cd ${{ inputs.repo_name }}
+          git config user.name "mm808"
+          git config user.email "mm808@users.noreply.github.com"
+          git add .
+          git commit -m "Automated badge update by update_readme_badges GitHub workflow"
+          git push
