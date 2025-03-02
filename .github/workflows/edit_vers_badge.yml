@@ -15,6 +15,8 @@ on:
         type: string
         description: the version value to edit badges with
         required: true
+env:
+  repo_owner: mm808
 
 permissions:
   contents: write
@@ -26,7 +28,7 @@ jobs:
       - name: Checkout the updater repository
         uses: actions/checkout@v4
         with:
-          repository: "update_readme_badges"
+          repository: "${repo_owner}/update_readme_badges"
           ref: main
           path: update_readme_badges
 
@@ -43,11 +45,11 @@ jobs:
           echo "The branch ${{ inputs.repo_branch }}"
           echo "The vers ${{ inputs.vers }}"
           if [[ "${{ inputs.repo_branch }}" == "main" ]]; then
-            env="PROD"
+            envname="PROD"
           else
-            env=$(echo "${{ inputs.repo_branch }}" | tr '[:lower:]' '[:upper:]')
+            envname=$(echo "${{ inputs.repo_branch }}" | tr '[:lower:]' '[:upper:]')
           fi
-          echo "The env ${env}"
+          echo "The envname ${envname}"
 
       - name: Checkout the calling repository
         uses: actions/checkout@v4
@@ -62,7 +64,7 @@ jobs:
           set -eu
           cd ${{ inputs.repo_name }}/docs
           # Replace the VER-xxx.xxx with the input version
-          sed -i '' "s/\(<h3>"${env}"<\/h3>.*VER-\)[0-9]\+\.[0-9]\+\(-blue?style=for-the-badge<\/img>\)/\1${{ inputs.vers }}\2/" index.html
+          sed -i '' "s/\(<h3>"${envname}"<\/h3>.*VER-\)[0-9]\+\.[0-9]\+\(-blue?style=for-the-badge<\/img>\)/\1${{ inputs.vers }}\2/" index.html
 
       - name: Configure git and push commit
         run: |
