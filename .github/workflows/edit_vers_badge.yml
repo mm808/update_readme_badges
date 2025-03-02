@@ -25,9 +25,6 @@ jobs:
   Edit_Vers_Badge:
     runs-on: ubuntu-latest
     steps:
-      - name: test
-        run: echo ${{ env.repo_owner }}
-
       - name: Checkout the updater repository
         uses: actions/checkout@v4
         with:
