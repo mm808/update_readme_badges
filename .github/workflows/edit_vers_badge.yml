@@ -49,7 +49,7 @@ jobs:
           else
             envname=$(echo "${{ inputs.repo_branch }}" | tr '[:lower:]' '[:upper:]')
           fi
-          echo "The envname ${envname}"
+          echo "envname=${envname}" >> $GITHUB_ENV
 
       - name: Checkout the calling repository
         uses: actions/checkout@v4
@@ -64,7 +64,7 @@ jobs:
           set -eu
           cd ${{ inputs.repo_name }}/docs
           # Replace the VER-xxx.xxx with the input version
-          sed -i '' "s/\(<h3>"${envname}"<\/h3>.*VER-\)[0-9]\+\.[0-9]\+\(-blue?style=for-the-badge<\/img>\)/\1${{ inputs.vers }}\2/" index.html
+          sed -i '' "s/\(<h3>"${{ env.envname }}"<\/h3>.*VER-\)[0-9]\+\.[0-9]\+\(-blue?style=for-the-badge<\/img>\)/\1${{ inputs.vers }}\2/" index.html
 
       - name: Configure git and push commit
         run: |
