@@ -31,7 +31,7 @@ jobs:
       - name: Checkout the updater repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.repo_owner }}/update_readme_badges
+          repository: "${{ inputs.repo_owner }}/update_readme_badges"
           ref: main
           path: update_readme_badges
 
@@ -57,7 +57,7 @@ jobs:
       - name: Checkout the calling repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.repo_owner }}/${{ inputs.repo_name }}
+          repository: "${{ inputs.repo_owner }}/${{ inputs.repo_name }}"
           ref: docs
           path: ${{ inputs.repo_name }}
 
