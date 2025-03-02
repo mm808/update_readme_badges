@@ -70,7 +70,7 @@ jobs:
           # sed -i "s/\(<h3>"${{ env.envname }}"<\/h3>.*VER-\)[0-9]\+\.[0-9]\+\(-blue?style=for-the-badge<\/img>\)/\1${{ inputs.vers }}\2/" index.html => "No such file or directory"
           # sed -zE "s|(.*<h3>${{ env.envname }}</h3>.*?<img[^>]+-VER-)[0-9]+\.[0-9]+|\1${{ inputs.vers }}|" index.html => no change
           # sed -zE "s|(.*<h3>${envname}</h3>.*?<img[^>]+-VER-)[0-9]+\.[0-9]+|\1${{ inputs.vers }}|" index.html => no change
-          sed -n "/<h3>${ENVNAME}<\/h3>/,/VER-/p" index.html
+          sed -n "/<h3>${envname}<\/h3>/,/VER-/p" index.html
 
           echo "After edit:"
           cat index.html
