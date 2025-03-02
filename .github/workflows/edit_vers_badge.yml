@@ -11,15 +11,13 @@ on:
         type: string
         description: the branch to edit badges for
         required: true
-      repo_owner:
-        type: string
-        description: the owner of the repo to edit badges in
-        required: true
-        default: mm808
       vers:
         type: string
         description: the version value to edit badges with
         required: true
+
+env:
+  repo_owner: mm808
 
 permissions:
   contents: write
@@ -39,7 +37,7 @@ jobs:
 
           echo "The repo ${{ inputs.repo_name }}"
           echo "The branch ${{ inputs.repo_branch }}"
-          echo "The owner ${{ inputs.repo_owner }}"
+          echo "The owner ${{ env.repo_owner }}"
           echo "The vers ${{ inputs.vers }}"
           if [[ "${{ inputs.repo_branch }}" == "main" ]]; then
             env="PROD"
@@ -51,14 +49,14 @@ jobs:
       - name: Checkout the updater repository
         uses: actions/checkout@v4
         with:
-          repository: "${{ inputs.repo_owner }}/update_readme_badges"
+          repository: "${{ env.repo_owner }}/update_readme_badges"
           ref: main
           path: update_readme_badges
 
       - name: Checkout the calling repository
         uses: actions/checkout@v4
         with:
-          repository: "${{ inputs.repo_owner }}/${{ inputs.repo_name }}"
+          repository: "${{ env.repo_owner }}/${{ inputs.repo_name }}"
           ref: docs
           path: ${{ inputs.repo_name }}
 
