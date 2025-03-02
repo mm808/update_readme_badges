@@ -26,6 +26,13 @@ jobs:
   Edit_Vers_Badge:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout the updater repository
+        uses: actions/checkout@v4
+        with:
+          repository: "${{ env.repo_owner }}/update_readme_badges"
+          ref: main
+          path: update_readme_badges
+
       - name: setup env inputs
         shell: bash
         run: |
@@ -45,13 +52,6 @@ jobs:
             env=$(echo "${{ inputs.repo_branch }}" | tr '[:lower:]' '[:upper:]')
           fi
           echo "The env ${env}"
-
-      - name: Checkout the updater repository
-        uses: actions/checkout@v4
-        with:
-          repository: "${{ env.repo_owner }}/update_readme_badges"
-          ref: main
-          path: update_readme_badges
 
       - name: Checkout the calling repository
         uses: actions/checkout@v4
