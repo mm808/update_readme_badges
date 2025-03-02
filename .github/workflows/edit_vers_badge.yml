@@ -23,43 +23,46 @@ jobs:
   Edit_Vers_Badge:
     runs-on: ubuntu-latest
     steps:
-      - name: debug inputs
+      - name: Checkout the updater repository
+        uses: actions/checkout@v4
+        with:
+          repository: mm808/update_readme_badges
+          ref: main
+          path: update_readme_badges
+
+      - name: setup env inputs
         shell: bash
         run: |
+          # cd update_readme_badges
           set -eu
+
+          echo pwd
+          echo ls -al
+
           echo "The repo ${{ inputs.repo_name }}"
           echo "The branch ${{ inputs.repo_branch }}"
           echo "The vers ${{ inputs.vers }}"
-
-      # always checkout main because we want that branch's README.md updated for all runs
-      - name: Checkout the repository
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          path: ${{ inputs.repo_name }}
-
-      - name: Update Vers badge
-        shell: bash
-        run: |
-          set -eu
-          cd ${{ inputs.repo_name }}
-          if [[ ${{ inputs.repo_branch }} == dev ]]; then
-            sed -i '/### DEV/,/### QA/ s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*/\1'"${{ inputs.vers }}"'/' README.md
-          elif [[ ${{ inputs.repo_branch }} == qa ]]; then
-            sed -i '/### QA/,/### MAIN/ s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*/\1'"${{ inputs.vers }}"'/' README.md
-          elif [[ ${{ inputs.repo_branch }} == main ]]; then
-            sed -i '/### MAIN/{n; n; n; s/\(img.shields.io\/badge\/VER-\)[0-9]*\.[0-9]*/\1'"${{ inputs.vers }}"'/}' README.md
+          if [[ "${{ inputs.repo_branch }}" == "main" ]]; then
+            env="PROD"
           else
-            echo "ERR: Branch not found. Cannot update Vers badge."
-            exit 1
+            env=$(echo "${{ inputs.repo_branch }}" | tr '[:lower:]' '[:upper:]')
           fi
+          echo "The env ${env}"
 
-      - name: Configure git and push commit
-        run: |
-          set -eu
-          cd ${{ inputs.repo_name }}
-          git config user.name "mm808"
-          git config user.email "mm808@users.noreply.github.com"
-          git add .
-          git commit -m "Automated vers badge update by edit_vers_badge workflow"
-          git push
+      # - name: edit vers svg
+      #   shell: bash
+      #   run: |
+      #     set -eu
+      #     cd ${{ inputs.repo_name }}/docs
+      #     # Replace the VER-xxx.xxx with the input version
+      #     sed -i '' "s/\(<h3>"${env}"<\/h3>.*VER-\)[0-9]\+\.[0-9]\+\(-blue?style=for-the-badge<\/img>\)/\1${{ inputs.vers }}\2/" index.html
+
+      # - name: Configure git and push commit
+      #   run: |
+      #     set -eu
+      #     cd ${{ inputs.repo_name }}
+      #     git config user.name "mm808"
+      #     git config user.email "mm808@users.noreply.github.com"
+      #     git add .
+      #     git commit -m "Automated badge update by update_readme_badges GitHub workflow"
+      #     git push
